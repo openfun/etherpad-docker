@@ -1,0 +1,33 @@
+version: "3.4"
+
+services:
+
+  postgresql:
+    image: postgres:9.6
+    environment:
+      POSTGRES_DB: etherpad
+      POSTGRES_USER: foo
+      POSTGRES_PASSWORD: pass
+
+  etherpad:
+    build:
+      context: .
+      target: production
+    image: etherpad:production
+    ports:
+      - "9001:9001"
+    environment:
+      DB_TYPE: postgres
+      DB_NAME: etherpad
+      DB_USER: foo
+      DB_PASS: pass
+      DB_HOST: postgresql
+      DB_PORT: 5432
+    volumes:
+      - ./private/SESSIONKEY.txt:/app/SESSIONKEY.txt
+      - ./private/APIKEY.txt:/app/APIKEY.txt
+    depends_on:
+      - postgresql
+
+  dockerize:
+    image: jwilder/dockerize
