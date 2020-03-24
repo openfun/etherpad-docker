@@ -2,6 +2,26 @@
 
 A stateless Dockerfile for the etherpad-lite application.
 
+## Getting started
+
+To build the image run the following command:
+
+```
+$ make build
+```
+
+And then you can run a local etherpad instance using postgresql with:
+
+```
+$ make run
+```
+
+More commands are available, for reference, see:
+
+```
+$ make help
+```
+
 ## Contributing
 
 This project is intended to be community-driven, so please, do not hesitate to
