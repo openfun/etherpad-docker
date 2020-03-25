@@ -1,0 +1,183 @@
+# Configuration file anchors
+generate-version-file: &generate-version-file
+  run:
+    name: Create a version.json
+    command: |
+      # Create a version.json à-la-mozilla
+      # https://github.com/mozilla-services/Dockerflow/blob/master/docs/version_object.md
+      printf '{"commit":"%s","version":"%s","source":"https://github.com/%s/%s","build":"%s"}\n' \
+        "$CIRCLE_SHA1" \
+        "$CIRCLE_TAG" \
+        "$CIRCLE_PROJECT_USERNAME" \
+        "$CIRCLE_PROJECT_REPONAME" \
+        "$CIRCLE_BUILD_URL" > src/static/version.json
+
+version: 2
+jobs:
+  # Git jobs
+  # Check that the git history is clean and complies with our expectations
+  lint-git:
+    docker:
+      - image: circleci/python:3.7-stretch
+    working_directory: ~/etherpad
+    steps:
+      - checkout
+      - run:
+          name: Check presence of all commit authors in CONTRIBUTORS.md file
+          command: |
+            for contributor in $(git log --pretty="format:%ae" 33587e4faee29ef55d0c8e8dd96eaa4989ea714a.. | sort | uniq ); do grep $contributor CONTRIBUTORS.md; done
+      - run:
+          name: Check absence of fixup commits
+          command: |
+            ! git log | grep 'fixup!'
+      - run:
+          name: Install gitlint
+          command: |
+            pip install --user gitlint
+      - run:
+          name: lint commit messages added to master
+          command: |
+              ~/.local/bin/gitlint --commits origin/master..HEAD
+
+  # Build the Docker image ready for production
+  build:
+    docker:
+      - image: circleci/buildpack-deps:stretch
+    working_directory: ~/etherpad
+    steps:
+      # Checkout repository sources
+      - checkout
+      # Generate a version.json file describing app release
+      - <<: *generate-version-file
+      # Activate docker-in-docker (with caching layers enabled)
+      - setup_remote_docker:
+          docker_layer_caching: true
+      # Each image is tagged with the current git commit sha1 to avoid
+      # collisions in parallel builds.
+      - run:
+          name: Build production image
+          command: |
+            build_arg=""
+            if [[ -n "$CIRCLE_TAG" ]]; then
+              build_arg="--build-arg EP_VERSION=${CIRCLE_TAG}"
+            fi
+            docker build \
+              ${build_arg} \
+              -t etherpad:${CIRCLE_SHA1} \
+              .
+      - run:
+          name: Check built image availability
+          command: docker images "etherpad:${CIRCLE_SHA1}*"
+
+      - run:
+          name: Check built image version
+          command: docker run --rm "etherpad:${CIRCLE_SHA1}" cat src/static/version.json
+
+
+  # ---- DockerHub publication job ----
+  hub:
+    docker:
+      - image: circleci/buildpack-deps:stretch
+    working_directory: ~/etherpad
+    steps:
+      - checkout
+      # Generate a version.json file describing app release
+      - <<: *generate-version-file
+      # Activate docker-in-docker (with layers caching layers enabled)
+      - setup_remote_docker:
+          docker_layer_caching: true
+      - run:
+          name: Build production image (using cached layers)
+          command: |
+            build_arg=""
+            if [[ -n "$CIRCLE_TAG" ]]; then
+              build_arg="--build-arg EP_VERSION=${CIRCLE_TAG}"
+            fi
+            docker build \
+              ${build_arg} \
+              -t etherpad:${CIRCLE_SHA1} \
+              .
+
+      # Login to DockerHub to Publish new images
+      #
+      # Nota bene: you'll need to define the following secrets environment vars
+      # in CircleCI interface:
+      #
+      #   - DOCKER_USER
+      #   - DOCKER_PASS
+      - run:
+          name: Login to DockerHub
+          command: echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+
+      # Tag docker images with the same pattern used in Git (Semantic Versioning)
+      #
+      # Git tag: v1.0.1
+      # Docker tag: 1.0.1(-dev)
+      - run:
+          name: Tag images
+          command: |
+            docker images fundocker/etherpad
+            DOCKER_TAG=$([[ -z "$CIRCLE_TAG" ]] && echo $CIRCLE_BRANCH || echo ${CIRCLE_TAG} | sed 's/^v//')
+            RELEASE_TYPE=$([[ -z "$CIRCLE_TAG" ]] && echo "branch" || echo "tag ")
+            # Display either:
+            # - DOCKER_TAG: master (Git branch)
+            # or
+            # - DOCKER_TAG: 1.1.2 (Git tag v1.1.2)
+            echo "DOCKER_TAG: ${DOCKER_TAG} (Git ${RELEASE_TYPE}${CIRCLE_TAG})"
+            docker tag etherpad:${CIRCLE_SHA1} fundocker/etherpad:${DOCKER_TAG}
+            if [[ -n "$CIRCLE_TAG" ]]; then
+              docker tag etherpad:${CIRCLE_SHA1} fundocker/etherpad:latest
+            fi
+            docker images | grep -E "^fundocker/etherpad\s*(${DOCKER_TAG}.*|latest|master)"
+
+      # Publish images to DockerHub
+      #
+      # Nota bene: logged user (see "Login to DockerHub" step) must have write
+      # permission for the project's repository; this also implies that the
+      # DockerHub repository already exists.
+      - run:
+          name: Publish images
+          command: |
+            DOCKER_TAG=$([[ -z "$CIRCLE_TAG" ]] && echo $CIRCLE_BRANCH || echo ${CIRCLE_TAG} | sed 's/^v//')
+            RELEASE_TYPE=$([[ -z "$CIRCLE_TAG" ]] && echo "branch" || echo "tag ")
+            # Display either:
+            # - DOCKER_TAG: master (Git branch)
+            # or
+            # - DOCKER_TAG: 1.1.2 (Git tag v1.1.2)
+            echo "DOCKER_TAG: ${DOCKER_TAG} (Git ${RELEASE_TYPE}${CIRCLE_TAG})"
+            docker push fundocker/etherpad:${DOCKER_TAG}
+            if [[ -n "$CIRCLE_TAG" ]]; then
+              docker push fundocker/etherpad:latest
+            fi
+
+workflows:
+  version: 2
+
+  etherpad:
+    jobs:
+      # Git jobs
+      #
+      # Check validity of git history
+      - lint-git:
+          filters:
+            tags:
+              only: /.*/
+
+      # Docker jobs
+      - build:
+          filters:
+            tags:
+              only: /.*/
+
+      # DockerHub publication.
+      #
+      # Publish docker images only if all build, lint and test jobs succeed and
+      # it has been tagged with a tag starting with the letter v
+      - hub:
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
+            tags:
+              only: /^v.*/

@@ -10,7 +10,7 @@ ARG EP_VERSION
 # === Download ===
 FROM curlimages/curl as downloader
 
-ARG EP_VERSION=1.8.0
+ARG EP_VERSION=master
 
 RUN curl -sLo /tmp/epl.tgz https://github.com/ether/etherpad-lite/archive/${EP_VERSION}.tar.gz
 
@@ -44,6 +44,8 @@ COPY --from=builder /builder/settings.json.docker settings.json
 # ...and sources
 COPY --from=builder /builder/src /app/src/
 COPY --from=builder /builder/node_modules /app/node_modules/
+# Copy extra static files (version.json, etc.)
+COPY ./src/static /app/src/static/
 
 # Run as non-privileged user
 USER 10001
