@@ -59,7 +59,7 @@ jobs:
           command: |
             build_arg=""
             if [[ -n "$CIRCLE_TAG" ]]; then
-              build_arg="--build-arg EP_VERSION=${CIRCLE_TAG}"
+              build_arg="--build-arg EP_VERSION=$(echo ${CIRCLE_TAG} | sed 's/^v//')"
             fi
             docker build \
               ${build_arg} \
@@ -91,7 +91,7 @@ jobs:
           command: |
             build_arg=""
             if [[ -n "$CIRCLE_TAG" ]]; then
-              build_arg="--build-arg EP_VERSION=${CIRCLE_TAG}"
+              build_arg="--build-arg EP_VERSION=$(echo ${CIRCLE_TAG} | sed 's/^v//')"
             fi
             docker build \
               ${build_arg} \
