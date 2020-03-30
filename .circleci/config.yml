@@ -54,12 +54,18 @@ jobs:
           docker_layer_caching: true
       # Each image is tagged with the current git commit sha1 to avoid
       # collisions in parallel builds.
+      #
+      # Note that we get the EP_VERSION build argument from the CIRCLE_TAG /
+      # git tag (if any).  This tag could include flavors, e.g.
+      # v1.8.0+skin-1.0.0. Our regex extracts the etherpad version by removing
+      # the 'v' prefix and the flavor suffix (e.g. +skin-1.0.0) if any.
       - run:
           name: Build production image
           command: |
             build_arg=""
             if [[ -n "$CIRCLE_TAG" ]]; then
-              build_arg="--build-arg EP_VERSION=$(echo ${CIRCLE_TAG} | sed 's/^v//')"
+              EP_VERSION=$(echo "${CIRCLE_TAG}" | sed -r "s/^v([0-9\.]*)\+?(\w*)-?([0-9\.]*)/\1/g")
+              build_arg="--build-arg EP_VERSION=${EP_VERSION}"
             fi
             docker build \
               ${build_arg} \
@@ -86,12 +92,17 @@ jobs:
       # Activate docker-in-docker (with layers caching layers enabled)
       - setup_remote_docker:
           docker_layer_caching: true
+      # Note that we get the EP_VERSION build argument from the CIRCLE_TAG /
+      # git tag (if any).  This tag could include flavors, e.g.
+      # v1.8.0+skin-1.0.0. Our regex extracts the etherpad version by removing
+      # the 'v' prefix and the flavor suffix (e.g. +skin-1.0.0) if any.
       - run:
           name: Build production image (using cached layers)
           command: |
             build_arg=""
             if [[ -n "$CIRCLE_TAG" ]]; then
-              build_arg="--build-arg EP_VERSION=$(echo ${CIRCLE_TAG} | sed 's/^v//')"
+              EP_VERSION=$(echo "${CIRCLE_TAG}" | sed -r "s/^v([0-9\.]*)\+?(\w*)-?([0-9\.]*)/\1/g")
+              build_arg="--build-arg EP_VERSION=${EP_VERSION}"
             fi
             docker build \
               ${build_arg} \
