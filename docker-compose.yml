@@ -44,6 +44,28 @@ services:
     depends_on:
       - postgresql
       - graylog
+      - redis-sentinel
+
+  # --- Scaling
+  # Add redis communication layer for websockets
+  redis-master:
+    image: redis:4.0.10-alpine
+
+  redis-slave:
+    image: redis:4.0.10-alpine
+    command: redis-server --slaveof redis-master 6379
+    depends_on:
+      - redis-master
+
+  redis-sentinel:
+    image: s7anley/redis-sentinel-docker
+    environment:
+      MASTER_NAME: sauron
+      QUORUM: 1
+      MASTER: redis-master
+    depends_on:
+        - redis-master
+        - redis-slave
 
   # --- Logs
   # GrayLog Docker reference documentation:
