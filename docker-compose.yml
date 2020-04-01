@@ -2,6 +2,16 @@ version: "3.4"
 
 services:
 
+  # --- Core services
+  nginx:
+    image: nginx
+    ports:
+      - "9001:9001"
+    volumes:
+      - ./docker/files/etc/nginx/conf.d:/etc/nginx/conf.d:ro
+    depends_on:
+      - etherpad
+
   postgresql:
     image: postgres:9.6
     environment:
@@ -14,8 +24,6 @@ services:
       context: .
       target: production
     image: etherpad:production
-    ports:
-      - "9001:9001"
     environment:
       DB_TYPE: postgres
       DB_NAME: etherpad
@@ -32,5 +40,9 @@ services:
     depends_on:
       - postgresql
 
+  # --- Extra tools
   dockerize:
     image: jwilder/dockerize
+
+  netshoot:
+    image: nicolaka/netshoot

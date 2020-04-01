@@ -2,6 +2,7 @@
 COMPOSE     = docker-compose
 COMPOSE_RUN = $(COMPOSE) run --rm
 WAIT_DB     = $(COMPOSE_RUN) dockerize -wait tcp://postgresql:5432 -timeout 60s
+WAIT_EP     = $(COMPOSE_RUN) dockerize -wait tcp://etherpad:9001 -timeout 60s
 
 default: help
 
@@ -34,6 +35,8 @@ run: ## start the server
 	@$(COMPOSE) up -d postgresql
 	@$(WAIT_DB)
 	@$(COMPOSE) up -d etherpad
+	@$(WAIT_EP)
+	@$(COMPOSE) up -d nginx
 .PHONY: run
 
 status: ## an alias for "docker-compose ps"
