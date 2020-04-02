@@ -1,5 +1,11 @@
 # Etherpad-lite Docker Makefile
-COMPOSE     = docker-compose
+
+# -- Docker
+# Get the current user ID to use for docker run and docker exec commands
+DOCKER_UID  = $(shell id -u)
+DOCKER_GID  = $(shell id -g)
+DOCKER_USER = $(DOCKER_UID):$(DOCKER_GID)
+COMPOSE     = DOCKER_USER=$(DOCKER_USER) docker-compose
 COMPOSE_RUN = $(COMPOSE) run --rm
 WAIT_DB     = $(COMPOSE_RUN) dockerize -wait tcp://postgresql:5432 -timeout 60s
 WAIT_EP     = $(COMPOSE_RUN) dockerize -wait tcp://etherpad:9001 -timeout 60s

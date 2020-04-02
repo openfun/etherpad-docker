@@ -1,1 +1,5 @@
+# Initialized plugins
+.ep_initialized
+
+# Secret keys
 private/

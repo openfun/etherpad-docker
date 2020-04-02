@@ -19,20 +19,25 @@ FROM base as builder
 
 WORKDIR /builder
 
-COPY --from=downloader /tmp/epl.tgz /builder/
+COPY --from=downloader /tmp/epl.tgz /builder
 RUN tar xzf epl.tgz --strip-components=1
 
 ENV NODE_ENV=production
 RUN cd src && \
       npm install
 
+# Install extra plugins
+COPY package.json package.json
+COPY src/plugins /builder/src/plugins/
+RUN npm install
+
 # Fake an installed node module
-RUN mkdir node_modules && \
-      cd node_modules && \
+RUN cd node_modules && \
       ln -s ../src ep_etherpad-lite
 
-# Pretend to have initialized etherpad
-RUN echo "done" > node_modules/ep_etherpad-lite/.ep_initialized
+# Pretend to have initialized etherpad and installed plugins
+RUN bash -c "for m in node_modules/ep_* ; do echo 'done' > ${m}/.ep_initialized; done" && \
+      echo "done" > src/.ep_initialized
 
 # === Production ===
 FROM base as production
@@ -46,6 +51,7 @@ COPY --from=builder /builder/src /app/src/
 COPY --from=builder /builder/node_modules /app/node_modules/
 # Copy extra static files (version.json, etc.)
 COPY ./src/static /app/src/static/
+COPY package.json package.json
 
 # Run as non-privileged user
 USER 10001
