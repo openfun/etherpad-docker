@@ -32,10 +32,12 @@ services:
       DB_HOST: postgresql
       DB_PORT: 5432
       SKIN_NAME: "education"
+      LOGLEVEL: "debug"
+    user: "${DOCKER_USER:-1000}"
     volumes:
       - ./private/SESSIONKEY.txt:/app/SESSIONKEY.txt
       - ./private/APIKEY.txt:/app/APIKEY.txt
-      # Custom theme development
+      # Custom plugins/skins development
       - ./src/static/skins/education:/app/src/static/skins/education
     depends_on:
       - postgresql

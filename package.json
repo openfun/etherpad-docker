@@ -1,0 +1,21 @@
+{
+  "name": "etherpad-docker",
+  "version": "1.8.0",
+  "description": "A stateless Dockerfile for the etherpad-lite application.",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/openfun/etherpad-docker.git"
+  },
+  "author": "OpenFun",
+  "license": "MIT",
+  "dependencies": {
+    "ep_etherpad-lite": "file:src"
+  },
+  "bugs": {
+    "url": "https://github.com/openfun/etherpad-docker/issues"
+  },
+  "homepage": "https://github.com/openfun/etherpad-docker#readme"
+}
