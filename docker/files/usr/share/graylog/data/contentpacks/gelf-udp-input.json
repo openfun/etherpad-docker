@@ -1,0 +1,65 @@
+{
+  "v": 1,
+  "id": "3312d6af-d93f-4b55-8674-ee6e44435b75",
+  "rev": 1,
+  "name": "UDP GELF input on 12201",
+  "summary": "Adds a global UDP GELF input on port 12201",
+  "description": "",
+  "vendor": "OpenFUN",
+  "url": "",
+  "parameters": [],
+  "entities": [
+    {
+      "v": "1",
+      "type": {
+        "name": "input",
+        "version": "1"
+      },
+      "id": "e70a518c-29b0-483f-966a-1d3b7dbf2b03",
+      "data": {
+        "title": {
+          "@type": "string",
+          "@value": "GELF UDP Input for etherpad"
+        },
+        "configuration": {
+          "recv_buffer_size": {
+            "@type": "integer",
+            "@value": 262144
+          },
+          "port": {
+            "@type": "integer",
+            "@value": 12201
+          },
+          "number_worker_threads": {
+            "@type": "integer",
+            "@value": 8
+          },
+          "bind_address": {
+            "@type": "string",
+            "@value": "0.0.0.0"
+          },
+          "decompress_size_limit": {
+            "@type": "integer",
+            "@value": 8388608
+          }
+        },
+        "static_fields": {},
+        "type": {
+          "@type": "string",
+          "@value": "org.graylog2.inputs.gelf.udp.GELFUDPInput"
+        },
+        "global": {
+          "@type": "boolean",
+          "@value": true
+        },
+        "extractors": []
+      },
+      "constraints": [
+        {
+          "type": "server-version",
+          "version": ">=3.2.4+a407287"
+        }
+      ]
+    }
+  ]
+}
