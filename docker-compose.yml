@@ -39,8 +39,43 @@ services:
       - ./private/APIKEY.txt:/app/APIKEY.txt
       # Custom plugins/skins development
       - ./src/static/skins/education:/app/src/static/skins/education
+      # Settings
+      - ./settings.json:/app/settings.json
     depends_on:
       - postgresql
+      - graylog
+
+  # --- Logs
+  # GrayLog Docker reference documentation:
+  # https://docs.graylog.org/en/3.2/pages/installation/docker.html
+  mongo:
+    image: mongo:3
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch-oss:6.8.5
+    environment:
+      http.host: "0.0.0.0"
+      ES_JAVA_OPTS: "-Xms512m -Xmx512m"
+
+  graylog:
+    image: graylog/graylog:3.2
+    environment:
+      # CHANGE ME (must be at least 16 characters)!
+      GRAYLOG_PASSWORD_SECRET: somepasswordpepper
+      # Password: admin
+      GRAYLOG_ROOT_PASSWORD_SHA2: 8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918
+      GRAYLOG_HTTP_EXTERNAL_URI: "http://127.0.0.1:9000/"
+      # Automatically create GELF UDP Input
+      GRAYLOG_CONTENT_PACKS_LOADER_ENABLED: "true"
+      GRAYLOG_CONTENT_PACKS_AUTO_INSTALL: gelf-udp-input.json
+    ports:
+      # Graylog web interface and REST API
+      - 9000:9000
+    volumes:
+      - ./docker/files/usr/share/graylog/data/contentpacks:/usr/share/graylog/data/contentpacks
+    depends_on:
+      - mongo
+      - elasticsearch
 
   # --- Extra tools
   dockerize:

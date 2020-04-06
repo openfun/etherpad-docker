@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Implement support for custom settings embedding
+- Add configurable GELF logger settings
 
 ## [1.8.0-education-1.0.0] - 2020-03-30
 

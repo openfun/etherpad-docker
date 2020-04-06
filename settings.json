@@ -445,45 +445,20 @@
     "appenders": [
       {
         "type": "console"
-        //, "category": "access"// only logs pad access
+      },
+      {
+        "type": "gelf",
+        "host": "${LOG_GELF_SERVER:graylog}",
+        "port": "${LOG_GELF_PORT:12201}",
+        "hostname": "${LOG_GELF_HOSTNAME:etherpad}",
+        "facility": "${LOG_GELF_FACILITY:graylog}",
+        "customFields": "${LOG_GELF_CUSTOMFIELDS:}"
+        /*
+           * You may add custom fields here (should start by an underscore):
+           * "_foo": "${FOO:bar}"
+           *
+           */
       }
-
-      /*
-      , { "type": "file"
-      , "filename": "your-log-file-here.log"
-      , "maxLogSize": 1024
-      , "backups": 3 // how many log files there're gonna be at max
-      //, "category": "test" // only log a specific category
-        }
-      */
-
-      /*
-      , { "type": "logLevelFilter"
-        , "level": "warn" // filters out all log messages that have a lower level than "error"
-        , "appender":
-          {  Use whatever appender you want here  }
-        }
-      */
-
-      /*
-      , { "type": "logLevelFilter"
-        , "level": "error" // filters out all log messages that have a lower level than "error"
-        , "appender":
-          { "type": "smtp"
-          , "subject": "An error occurred in your EPL instance!"
-          , "recipients": "bar@blurdybloop.com, baz@blurdybloop.com"
-          , "sendInterval": 300 // 60 * 5 = 5 minutes -- will buffer log messages; set to 0 to send a mail for every message
-          , "transport": "SMTP", "SMTP": { // see https://github.com/andris9/Nodemailer#possible-transport-methods
-              "host": "smtp.example.com", "port": 465,
-              "secureConnection": true,
-              "auth": {
-                  "user": "foo@example.com",
-                  "pass": "bar_foo"
-              }
-            }
-          }
-        }
-      */
     ]
   } // logconfig
 }
