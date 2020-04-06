@@ -44,13 +44,13 @@ FROM base as production
 
 WORKDIR /app
 
-# Copy the configuration file
-COPY --from=builder /builder/settings.json.docker settings.json
-# ...and sources
+# Copy sources
 COPY --from=builder /builder/src /app/src/
 COPY --from=builder /builder/node_modules /app/node_modules/
+# Copy the configuration file
+COPY settings.json settings.json
 # Copy extra static files (version.json, etc.)
-COPY ./src/static /app/src/static/
+COPY src/static /app/src/static/
 COPY package.json package.json
 
 # Run as non-privileged user
