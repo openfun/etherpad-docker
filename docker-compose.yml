@@ -39,7 +39,7 @@ services:
       - ./private/APIKEY.txt:/app/APIKEY.txt
       # Custom plugins/skins development
       - ./src/static/skins/education:/app/src/static/skins/education
-      # Settings
+      # Mount local settings for development
       - ./settings.json:/app/settings.json
     depends_on:
       - postgresql
