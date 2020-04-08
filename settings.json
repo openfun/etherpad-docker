@@ -452,12 +452,14 @@
         "port": "${LOG_GELF_PORT:12201}",
         "hostname": "${LOG_GELF_HOSTNAME:etherpad}",
         "facility": "${LOG_GELF_FACILITY:graylog}",
-        "customFields": "${LOG_GELF_CUSTOMFIELDS:}"
-        /*
-           * You may add custom fields here (should start by an underscore):
-           * "_foo": "${FOO:bar}"
+        "customFields": {
+          "_foo": "test123"
+          /*
+           * You may add other custom fields here (should start by an underscore):
+           * "_bar": "lol"
            *
            */
+        }
       }
     ]
   } // logconfig
