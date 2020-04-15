@@ -12,7 +12,8 @@
   "author": "OpenFun",
   "license": "MIT",
   "dependencies": {
-    "ep_etherpad-lite": "file:src"
+    "ep_etherpad-lite": "file:src",
+    "ep_lightship": "file:src/plugins/ep_lightship"
   },
   "bugs": {
     "url": "https://github.com/openfun/etherpad-docker/issues"

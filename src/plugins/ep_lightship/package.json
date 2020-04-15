@@ -1,0 +1,14 @@
+{
+  "name": "ep_lightship",
+  "version": "0.1.0",
+  "description": "Etherpad-lite plugin that integrates lightship health checks",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "OpenFun",
+  "dependencies": {
+    "lightship": "6.1.0"
+  },
+  "license": "MIT"
+}

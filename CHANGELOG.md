@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Implement application's health checks thanks to the ep_lightship plugin
+
 ## [1.8.0-education-1.1.0] - 2020-04-08
 
 ### Added

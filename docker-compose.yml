@@ -25,20 +25,22 @@ services:
       target: production
     image: etherpad:production
     environment:
-      DB_TYPE: postgres
-      DB_NAME: etherpad
-      DB_USER: foo
-      DB_PASS: pass
       DB_HOST: postgresql
+      DB_NAME: etherpad
+      DB_PASS: pass
       DB_PORT: 5432
-      SKIN_NAME: "education"
+      DB_TYPE: postgres
+      DB_USER: foo
       LOGLEVEL: "debug"
+      ROARR_LOG: "true"
+      SKIN_NAME: "education"
     user: "${DOCKER_USER:-1000}"
     volumes:
       - ./private/SESSIONKEY.txt:/app/SESSIONKEY.txt
       - ./private/APIKEY.txt:/app/APIKEY.txt
       # Custom plugins/skins development
       - ./src/static/skins/education:/app/src/static/skins/education
+      - ./src/plugins/ep_lightship:/app/node_modules/ep_lightship
       # Mount local settings for development
       - ./settings.json:/app/settings.json
     depends_on:

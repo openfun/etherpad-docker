@@ -1,0 +1,10 @@
+{
+  "parts": [
+    {
+      "name": "serverStart",
+      "hooks": {
+        "expressCreateServer": "ep_lightship/server:start"
+      }
+    }
+  ]
+}
