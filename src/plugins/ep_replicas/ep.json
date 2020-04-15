@@ -1,0 +1,10 @@
+{
+  "parts": [
+    {
+      "name": "redisSentinelAdapter",
+      "hooks": {
+        "socketio": "ep_replicas/server:redisSentinelAdapter"
+      }
+    }
+  ]
+}
