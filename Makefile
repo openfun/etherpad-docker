@@ -14,6 +14,11 @@ WAIT_GRAYLOG = $(COMPOSE_RUN) dockerize -wait tcp://graylog:9000 -timeout 120s
 default: help
 
 # -- Project
+package-lock.json: package.json
+	@echo "Updating package-lock.json file..."
+	@$(COMPOSE_RUN) -T --no-deps etherpad \
+	  cat package-lock.json > package-lock.json
+
 private/SESSIONKEY.txt:
 	mkdir -p private
 	head /dev/urandom | tr -dc A-Za-z0-9 | head -c 32 > private/SESSIONKEY.txt
@@ -60,6 +65,12 @@ stop: ## stop the server
 clean: ## restore repository state as it was freshly cloned
 	git clean -idx
 .PHONY: clean
+
+lockfile: \
+  build \
+  package-lock.json
+lockfile: ## update npm package-lock.json file
+.PHONY: lockfile
 
 help:
 	@grep -E '^[a-zA-Z0-9_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
