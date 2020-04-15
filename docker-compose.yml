@@ -39,6 +39,7 @@ services:
       - ./private/APIKEY.txt:/app/APIKEY.txt
       # Custom plugins/skins development
       - ./src/static/skins/education:/app/src/static/skins/education
+      - ./src/plugins/ep_replicas:/app/node_modules/ep_replicas
       # Mount local settings for development
       - ./settings.json:/app/settings.json
     depends_on:
