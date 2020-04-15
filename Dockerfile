@@ -36,8 +36,8 @@ RUN cd node_modules && \
       ln -s ../src ep_etherpad-lite
 
 # Pretend to have initialized etherpad and installed plugins
-RUN bash -c "for m in node_modules/ep_* ; do echo 'done' > ${m}/.ep_initialized; done" && \
-      echo "done" > src/.ep_initialized
+RUN bash -c "for m in node_modules/ep_* ; do echo 'done' > \$m/.ep_initialized; done" && \
+      ls node_modules/ep_*/.ep_initialized
 
 # === Production ===
 FROM base as production
