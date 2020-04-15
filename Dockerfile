@@ -24,12 +24,12 @@ RUN tar xzf epl.tgz --strip-components=1
 
 ENV NODE_ENV=production
 RUN cd src && \
-      npm install
+      npm install --no-progress --no-audit
 
 # Install extra plugins
-COPY package.json package.json
+COPY package.json package-lock.json /builder/
 COPY src/plugins /builder/src/plugins/
-RUN npm install
+RUN npm install --no-progress --no-audit
 
 # Fake an installed node module
 RUN cd node_modules && \
@@ -49,6 +49,7 @@ COPY --from=builder /builder/settings.json.docker settings.json
 # Copy sources
 COPY --from=builder /builder/src /app/src/
 COPY --from=builder /builder/node_modules /app/node_modules/
+COPY --from=builder /builder/package-lock.json /app
 # Copy extra static files (version.json, etc.)
 COPY src/static /app/src/static/
 COPY package.json package.json
