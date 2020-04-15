@@ -45,7 +45,7 @@ run: ## start the server
 	@$(WAIT_GRAYLOG)
 	@$(COMPOSE) up -d etherpad
 	@$(WAIT_EP)
-	@$(COMPOSE) up -d nginx
+	@$(COMPOSE) up -d --scale etherpad=6 nginx
 .PHONY: run
 
 status: ## an alias for "docker-compose ps"
