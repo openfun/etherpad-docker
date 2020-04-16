@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Install and configure the `ep_webpack` plugin
+
 ## [1.8.0-education-1.2.0] - 2020-04-20
 
 ### Added

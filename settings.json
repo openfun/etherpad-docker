@@ -462,5 +462,12 @@
         }
       }
     ]
-  } // logconfig
+  }, // logconfig
+  /*
+   * Plugins
+   */
+  "ep_webpack": {
+    /* Bundle CSS files too */
+    "bundleCSS": true
+  }
 }
