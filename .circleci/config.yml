@@ -23,10 +23,6 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Check presence of all commit authors in CONTRIBUTORS.md file
-          command: |
-            for contributor in $(git log --pretty="format:%ae" 33587e4faee29ef55d0c8e8dd96eaa4989ea714a.. | sort | uniq ); do grep $contributor CONTRIBUTORS.md; done
-      - run:
           name: Check absence of fixup commits
           command: |
             ! git log | grep 'fixup!'
@@ -38,6 +34,36 @@ jobs:
           name: lint commit messages added to master
           command: |
               ~/.local/bin/gitlint --commits origin/master..HEAD
+
+  # Check that the CHANGELOG has been updated in the current branch
+  check-changelog:
+    docker:
+      - image: circleci/buildpack-deps:stretch-scm
+    working_directory: ~/fun
+    steps:
+      - checkout
+      - run:
+          name: Check that the CHANGELOG has been modified in the current branch
+          command: |
+            git whatchanged --name-only --pretty="" origin..HEAD | grep CHANGELOG
+
+  # Check lockfile consistency.
+  #
+  # Make sure that the package-lock.json file has been updated consequently to
+  # a package.json file.
+  check-lockfile:
+    docker:
+      - image: circleci/buildpack-deps:stretch
+    working_directory: ~/etherpad
+    steps:
+      # Checkout repository sources
+      - checkout
+      - run:
+          name: Check lockfile consistency
+          command: |
+            if git whatchanged --name-only --pretty="" origin..HEAD | grep package.json; then
+              git whatchanged --name-only --pretty="" origin..HEAD | grep package-lock.json
+            fi
 
   # Build the Docker image ready for production
   build:
@@ -166,10 +192,16 @@ workflows:
 
   etherpad:
     jobs:
-      # Git jobs
-      #
-      # Check validity of git history
+      # Quality jobs
       - lint-git:
+          filters:
+            tags:
+              only: /.*/
+      - check-changelog:
+          filters:
+            tags:
+              only: /.*/
+      - check-lockfile:
           filters:
             tags:
               only: /.*/
