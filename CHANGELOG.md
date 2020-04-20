@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.8.0-education-1.2.0] - 2020-04-20
+
 ### Added
 
 - Implement application's health checks thanks to the ep_lightship plugin
@@ -35,7 +37,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - New 1.8.0 official release
 
-[unreleased]: https://github.com/olivierlacan/keep-a-changelog/compare/v1.8.0+education-1.1.0...HEAD
+[unreleased]: https://github.com/olivierlacan/keep-a-changelog/compare/v1.8.0+education-1.2.0...HEAD
+[1.8.0-education-1.2.0]: https://github.com/openfun/etherpad-docker/compare/v1.8.0+education-1.1.0...v1.8.0+education-1.2.0
 [1.8.0-education-1.1.0]: https://github.com/openfun/etherpad-docker/compare/v1.8.0+education-1.0.0...v1.8.0+education-1.1.0
 [1.8.0-education-1.0.0]: https://github.com/openfun/etherpad-docker/compare/v1.8.0...v1.8.0+education-1.0.0
 [1.8.0]: https://github.com/openfun/etherpad-docker/releases/tag/v1.8.0
