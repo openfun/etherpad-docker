@@ -14,10 +14,10 @@ WAIT_GRAYLOG = $(COMPOSE_RUN) dockerize -wait tcp://graylog:9000 -timeout 120s
 default: help
 
 # -- Project
-package-lock.json: package.json
-	@echo "Updating package-lock.json file..."
-	@$(COMPOSE_RUN) -T --no-deps etherpad \
-	  cat package-lock.json > package-lock.json
+yarn.lock: package.json
+	@echo "Updating yarn.lock file..."
+	@$(COMPOSE_RUN) --no-deps -u root etherpad \
+	  bash -c "yarn install --production &> /tmp/yarn.log && cat yarn.lock" > yarn.lock
 
 private/SESSIONKEY.txt:
 	mkdir -p private
@@ -67,9 +67,8 @@ clean: ## restore repository state as it was freshly cloned
 .PHONY: clean
 
 lockfile: \
-  build \
-  package-lock.json
-lockfile: ## update npm package-lock.json file
+  yarn.lock
+lockfile: ## update yarn.lock file
 .PHONY: lockfile
 
 help:

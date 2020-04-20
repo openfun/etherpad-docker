@@ -47,24 +47,6 @@ jobs:
           command: |
             git whatchanged --name-only --pretty="" origin..HEAD | grep CHANGELOG
 
-  # Check lockfile consistency.
-  #
-  # Make sure that the package-lock.json file has been updated consequently to
-  # a package.json file.
-  check-lockfile:
-    docker:
-      - image: circleci/buildpack-deps:stretch
-    working_directory: ~/etherpad
-    steps:
-      # Checkout repository sources
-      - checkout
-      - run:
-          name: Check lockfile consistency
-          command: |
-            if git whatchanged --name-only --pretty="" origin..HEAD | grep package.json; then
-              git whatchanged --name-only --pretty="" origin..HEAD | grep package-lock.json
-            fi
-
   # Build the Docker image ready for production
   build:
     docker:
@@ -198,10 +180,6 @@ workflows:
             tags:
               only: /.*/
       - check-changelog:
-          filters:
-            tags:
-              only: /.*/
-      - check-lockfile:
           filters:
             tags:
               only: /.*/
