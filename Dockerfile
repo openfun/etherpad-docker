@@ -24,12 +24,12 @@ RUN tar xzf epl.tgz --strip-components=1
 
 ENV NODE_ENV=production
 RUN cd src && \
-      npm install --no-progress --no-audit
+      npm ci
 
 # Install extra plugins
 COPY package.json package-lock.json /builder/
 COPY src/plugins /builder/src/plugins/
-RUN npm install --no-progress --no-audit
+RUN npm ci
 
 # Fake an installed node module
 RUN cd node_modules && \
