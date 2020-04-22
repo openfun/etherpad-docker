@@ -16,8 +16,8 @@ default: help
 # -- Project
 package-lock.json: package.json
 	@echo "Updating package-lock.json file..."
-	@$(COMPOSE_RUN) -T --no-deps etherpad \
-	  cat package-lock.json > package-lock.json
+	@$(COMPOSE_RUN) --no-deps -u root etherpad \
+	  bash -c "npm install --no-progress --no-audit &> /dev/null && cat package-lock.json" > package-lock.json
 
 private/SESSIONKEY.txt:
 	mkdir -p private
@@ -67,7 +67,6 @@ clean: ## restore repository state as it was freshly cloned
 .PHONY: clean
 
 lockfile: \
-  build \
   package-lock.json
 lockfile: ## update npm package-lock.json file
 .PHONY: lockfile
