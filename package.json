@@ -11,9 +11,13 @@
   },
   "author": "OpenFun",
   "license": "MIT",
+  "devDependencies": {
+    "webpack-cli": "3.2.1"
+  },
   "dependencies": {
     "ep_etherpad-lite": "file:src",
-    "ep_lightship": "file:src/plugins/ep_lightship"
+    "ep_lightship": "file:src/plugins/ep_lightship",
+    "ep_webpack": "1.0.2"
   },
   "bugs": {
     "url": "https://github.com/openfun/etherpad-docker/issues"

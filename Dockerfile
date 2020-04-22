@@ -39,6 +39,18 @@ RUN cd node_modules && \
 RUN bash -c "for m in node_modules/ep_* ; do echo 'done' > \$m/.ep_initialized; done" && \
       ls node_modules/ep_*/.ep_initialized
 
+# === Front ===
+FROM builder as front
+
+# Install development dependencies
+ENV NODE_ENV=development
+RUN npm install --no-progress --no-audit
+
+# Optimize the build thanks to webpack
+RUN cd node_modules/ep_webpack && \
+      touch static/js/index.js && \
+      npm run build
+
 # === Production ===
 FROM base as production
 
@@ -51,6 +63,7 @@ COPY --from=builder /builder/src /app/src/
 COPY --from=builder /builder/node_modules /app/node_modules/
 COPY --from=builder /builder/package-lock.json /app
 # Copy extra static files (version.json, etc.)
+COPY --from=front /builder/node_modules/ep_webpack/static /app/node_modules/ep_webpack/static/
 COPY src/static /app/src/static/
 COPY package.json package.json
 
