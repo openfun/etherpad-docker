@@ -26,6 +26,14 @@ function customStart() {
   img.setAttribute('alt', 'pads for education icon');
   footer.appendChild(img);
 
+  let terms_wrapper = document.createElement('div');
+  terms_wrapper.setAttribute('class', 'terms');
+  let terms = document.createElement('a');
+  terms.setAttribute('href', '/terms');
+  terms.appendChild(document.createTextNode('Mentions légales'));
+  terms_wrapper.appendChild(terms);
+  footer.appendChild(terms_wrapper);
+
   /* layout */
   let wrapper = document.getElementById('wrapper');
   document.body.insertBefore(header, wrapper);
