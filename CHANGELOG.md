@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Improve build reproducibility by using the `npm ci` command
+- Upgrade education skin to 1.1.0 (add terms link)
 
 ## [1.8.0-education-1.2.0] - 2020-04-20
 

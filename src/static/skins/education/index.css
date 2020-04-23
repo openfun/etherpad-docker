@@ -18,6 +18,10 @@ body {
   background-size: cover;
 }
 
+a {
+  color: #f0f0f0;
+}
+
 #wrapper {
   border-top: none;
   margin-top: 0;
@@ -51,6 +55,10 @@ footer {
 
 footer img {
   max-width: 100px;
+}
+
+footer .terms {
+  padding-top: 1rem;
 }
 
 #inner {
