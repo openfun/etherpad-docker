@@ -11,6 +11,8 @@ WAIT_DB      = $(COMPOSE_RUN) dockerize -wait tcp://postgresql:5432 -timeout 60s
 WAIT_EP      = $(COMPOSE_RUN) dockerize -wait tcp://etherpad:9001 -timeout 60s
 WAIT_GRAYLOG = $(COMPOSE_RUN) dockerize -wait tcp://graylog:9000 -timeout 120s
 
+EP_VERSION  ?= master
+
 default: help
 
 # -- Project
@@ -29,7 +31,7 @@ private/APIKEY.txt:
 
 # -- Docker/compose
 build: ## build the etherpad container
-	@$(COMPOSE) build etherpad
+	@$(COMPOSE) build --build-arg EP_VERSION=$(EP_VERSION) etherpad
 .PHONY: build
 
 down: ## remove stack (warning: it removes the database container)
